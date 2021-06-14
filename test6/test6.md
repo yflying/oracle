@@ -639,8 +639,8 @@ a.REGISTRATIONDATE between to_date('2020-1-1','yyyy-mm-dd') and to_date('2020-6-
 5.1全备份
 
 ```linux
-[[oracle@oracle-pc ~]$ cat rman_level0.sh
-#rman_level0.sh 
+[[oracle@oracle-pc ~]$ cat yyt_level0.sh
+#yyt_level0.sh 
 #!/bin/sh
 
 export NLS_LANG='SIMPLIFIED CHINESE_CHINA.AL32UTF8'
@@ -648,18 +648,17 @@ export ORACLE_HOME=/home/oracle/app/oracle/product/12.1.0/dbhome_1
 export ORACLE_SID=orcl  
 export PATH=$ORACLE_HOME/bin:$PATH  
 
-
-rman target / nocatalog msglog=/home/oracle/rman_backup/lv0_`date +%Y%m%d-%H%M%S`_L0.log << EOF
+yyt target / nocatalog msglog=/home/oracle/yyt_backup/lv0_`date +%Y%m%d-%H%M%S`_L0.log << EOF
 run{
 configure retention policy to redundancy 1;
 configure controlfile autobackup on;
-configure controlfile autobackup format for device type disk to '/home/oracle/rman_backup/%F';
+configure controlfile autobackup format for device type disk to '/home/oracle/yyt_backup/%F';
 configure default device type to disk;
 crosscheck backup;
 crosscheck archivelog all;
 allocate channel c1 device type disk;
-backup as compressed backupset incremental level 0 database format '/home/oracle/rman_backup/dblv0_%d_%T_%U.bak'
-   plus archivelog format '/home/oracle/rman_backup/arclv0_%d_%T_%U.bak';
+backup as compressed backupset incremental level 0 database format '/home/oracle/yyt_backup/dblv0_%d_%T_%U.bak'
+   plus archivelog format '/home/oracle/yyt_backup/arclv0_%d_%T_%U.bak';
 report obsolete;
 delete noprompt obsolete;
 delete noprompt expired backup;
@@ -669,16 +668,16 @@ release channel c1;
 EOF
 
 exit
-[oracle@oracle-pc ~]$ ./rman_level0.sh 
-[oracle@oracle-pc ~]$ cd rman_backup/
-[oracle@oracle-pc rman_backup]$ ls
-arclv0_ORCL_20211111_90ugiejc_1_1.bak  dblv0_ORCL_20211111_8uugiegr_1_1.bak
-arclv1_ORCL_20211111_92ugiel4_1_1.bak  dblv0_ORCL_20211111_8vugieii_1_1.bak
-arclv1_ORCL_20211111_96ugielk_1_1.bak  dblv1_ORCL_20191111_93ugiel5_1_1.bak
-c-1392946895-20191111-02               dblv1_ORCL_20191111_94ugield_1_1.bak
-c-1392946895-20191201-00               lv0_20191111-003303_L0.log
-c-1392946895-20191201-01               lv0_20191201-174530_L0.log
-dblv0_ORCL_20191111_8tugiefo_1_1.bak   lv1_20191111-003650_L0.log
+[oracle@oracle-pc ~]$ ./yyt_level0.sh 
+[oracle@oracle-pc ~]$ cd yyt_backup/
+[oracle@oracle-pc yyt_backup]$ ls
+arclv0_ORCL_20210525_90ugiejc_1_1.bak  dblv0_ORCL_20210511_8uugiegr_1_1.bak
+arclv1_ORCL_20210525_92ugiel4_1_1.bak  dblv0_ORCL_20210525_8vugieii_1_1.bak
+arclv1_ORCL_20210525_96ugielk_1_1.bak  dblv1_ORCL_20210525_93ugiel5_1_1.bak
+c-1392946895-20210525-02               dblv1_ORCL_20210525_94ugield_1_1.bak
+c-1392946895-20210525-00               lv0_20210525-003303_L0.log
+c-1392946895-20210525-01               lv0_20210525-174530_L0.log
+dblv0_ORCL_20210525_8tugiefo_1_1.bak   lv1_20210525-003650_L0.log
 ```
 
 5.2备份后模拟数据库文件损坏、数据库完全恢复
